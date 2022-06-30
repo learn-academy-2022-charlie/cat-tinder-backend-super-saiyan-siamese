@@ -66,3 +66,6 @@ end
 
 
 gem "rspec-rails", "~> 5.1"
+
+# installing CORS so the front and back ends can talk to each other.
+gem 'rack-cors', :require => 'rack/cors'
