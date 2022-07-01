@@ -26,7 +26,7 @@ RSpec.describe "Cats", type: :request do
         cat: {
           name: 'Buster',
           age: 4,
-          enjoys: 'Bustin.',
+          enjoys: 'Walks in the park',
           image: 'https://thiscatdoesnotexist.com/'
         }
       }
@@ -43,6 +43,67 @@ RSpec.describe "Cats", type: :request do
       # Assure that the created cat has the correct attributes
       expect(cat.name).to eq 'Buster'
     end
+
+    it "doesn't create a cat without a name" do
+      cat_params = {
+        cat: {
+          age: 2,
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+      # Send the request to the  server
+      post '/cats', params: cat_params
+      # expect an error if the cat_params does not have a name
+      expect(response.status).to eq 422
+      # Convert the JSON response into a Ruby Hash
+      json = JSON.parse(response.body)
+      # Errors are returned as an array because there could be more than one, if there are more than one validation failures on an attribute.
+      expect(json['name']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without a age" do
+      cat_params = {
+        cat: {
+          name: "Michaelton",
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+      post '/cats', params: cat_params
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['age']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without an enjoys entry" do
+      cat_params = {
+        cat: {
+          name: "Michaelton",
+          age: 5,
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+      post '/cats', params: cat_params
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['enjoys']).to include "can't be blank"
+    end
+
+    it "doesn't create a cat without an image" do
+      cat_params = {
+        cat: {
+          name: "Michaelton",
+          age: 5,
+          enjoys: "long walks off short piers"
+        }
+      }
+      post '/cats', params: cat_params
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['image']).to include "can't be blank"
+    end
+
   end
 
   describe "PATCH /update" do
@@ -54,30 +115,55 @@ RSpec.describe "Cats", type: :request do
         enjoys: 'Walks in the park',
         image: 'https://thiscatdoesnotexist.com/'
       )
-      cat = Cat.first
       # The params we send to update the instance of cat
       update_cat_params = {
-          cat: {
+        cat: {
           name: 'Buster',
           age: 4,
-          enjoys: 'Bustin.',
+          enjoys: 'Walks in the park',
           image: 'https://thiscatdoesnotexist.com/'
         }
       }
+      cat = Cat.first
+      cat_id = cat.id
       
-  
       # Send the request to the server
       patch "/cats/#{cat.id}", params: update_cat_params
   
       # Assure that we get a success back
       expect(response).to have_http_status(200)
       #update cat will be assigned to the cat we updated
-      update_cat = Cat.find(cat.id)
+      update_cat = Cat.find(cat_id)
   
       # Assure that the created cat has the correct attributes
       # expect(cat.name).to eq 'Felix'
       expect(update_cat.name).to eq 'Buster'
     end
+
+    it "doesn't update a cat to be nameless" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+      
+      update_cat_params = {
+        cat: {
+          
+          age: 2,
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+      cat = Cat.first
+      cat_id = cat.id
+      patch "/cats/#{cat_id}", params: update_cat_params
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['name']).to include "can't be blank"
+    end
+
   end
   describe "Destroy /cats/:id" do
     it "destroys a cat from the database" do
@@ -85,7 +171,7 @@ RSpec.describe "Cats", type: :request do
         cat: {
           name: 'Buster',
           age: 4,
-          enjoys: 'Bustin.',
+          enjoys: 'Walks in the park',
           image: 'https://thiscatdoesnotexist.com/'
         }
       }
