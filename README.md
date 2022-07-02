@@ -577,3 +577,5 @@ class Cat < ApplicationRecord
     validates :enjoys, length: {minimum: 10}
   end
 ```
+
+# Fetch
