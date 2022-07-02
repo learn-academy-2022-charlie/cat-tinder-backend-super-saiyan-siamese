@@ -1,3 +1,14 @@
+# TO DEMO CAT TINDER
+- boot up terminal
+> cat-tinder-backend repo
+$ rails db:drop
+$ rails db:setup
+$ rails start
+
+> cat-tinder-frontend repo
+$ yarn start
+$ y
+
 # Setting up the Backend
 ```
 $ rails new cat-tinder-backend -d postgresql -T
@@ -577,3 +588,10 @@ class Cat < ApplicationRecord
     validates :enjoys, length: {minimum: 10}
   end
 ```
+
+# Cat Images Links
+https://i.ibb.co/KXW3V0h/saiyan1.jpg
+https://i.ibb.co/XSNQS34/saiyan2.jpg
+https://i.ibb.co/BzCJGK0/saiyan3.jpg
+https://i.ibb.co/TwCYRcF/saiyan4.jpg
+https://i.ibb.co/nmBJWhL/saiyan5.jpg

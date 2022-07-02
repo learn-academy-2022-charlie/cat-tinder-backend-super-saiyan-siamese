@@ -11,19 +11,31 @@ cats = [
     name: 'Ketchup',
     age: 2,
     enjoys: 'Supressing fire on an enemy position.',
-    image: 'https://thiscatdoesnotexist.com/'
+    image: 'https://i.ibb.co/KXW3V0h/saiyan1.jpg'
   },
   {
     name: 'Pickles',
     age: 12,
-    enjoys: 'Giving 8-digit grids coordinates for accurate indirect fire.',
-    image: 'https://thiscatdoesnotexist.com/'
+    enjoys: 'Giving 8-digit grid coordinates for accurate indirect fire.',
+    image: 'https://i.ibb.co/XSNQS34/saiyan2.jpg'
   },
   {
     name: 'Relish',
     age: 5,
-    enjoys: 'Relish.',
-    image: 'https://thiscatdoesnotexist.com/'
+    enjoys: 'being the gross green topping on hotdogs',
+    image: 'https://i.ibb.co/BzCJGK0/saiyan3.jpg'
+  },
+  {
+    name: 'Mayo',
+    age: 7,
+    enjoys: 'maneuvering on pinned down enemies',
+    image: 'https://i.ibb.co/TwCYRcF/saiyan4.jpg'
+  },
+  {
+    name: 'Hot Sauce',
+    age: 3,
+    enjoys: 'being thrown down the stairs',
+    image: 'https://i.ibb.co/nmBJWhL/saiyan5.jpg'
   }
 ]
 
