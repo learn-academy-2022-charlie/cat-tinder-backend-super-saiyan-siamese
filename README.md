@@ -456,3 +456,124 @@ Currently working on
 > file path: spec/requests/cats_spec.rb
 
 Attempting to create spec looking for a 422 error if update validations are not met. Currently getting a 200 error, so either the spec is wrong or the route is wrong.
+ - solved: Relevant code to follow:
+ >File path: spec/models/cat_spec.rb
+ ```ruby
+  describe 'minimum length/useful information test' do
+    it 'validates the minumum length of the cat name' do
+      cat = Cat.create(
+        name: "",
+        age: 5,
+        enjoys: "long walks off short piers",
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+      expect(cat.errors[:name]).to_not be_empty
+    end
+    it 'validates the minumum length of the cat age' do
+      cat = Cat.create(
+        name: "Michaelton",
+        age: "",
+        enjoys: "long walks off short piers",
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+      expect(cat.errors[:age]).to_not be_empty
+    end
+    it "should validate if enjoys is at least 10 characters long" do
+      cat = Cat.create(
+        name: "Michaelton",
+        age: 5,
+        enjoys: "dying",
+        image: 'https://thiscatdoesnotexist.com/')
+      expect(cat.errors[:enjoys]).to_not be_empty
+    end
+  end
+ ```
+>File Path: spec/requests/cats_spec.rb
+```ruby
+    it "doesn't update a cat to have a useless name" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+
+      felix = Cat.first
+      p felix
+      edit_params = {
+        cat: {
+          name: '',
+          age: 3,
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['name']).to include "can't be blank"
+    end
+
+    it "doesn't update a cat to not have useful age information" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+
+      felix = Cat.first
+      p felix
+      edit_params = {
+        cat: {
+          name: 'Felix',
+          age: nil,
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['age']).to include "can't be blank"
+    end
+
+    it "doesn't update a cat to not have useful enjoyment information" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+
+      felix = Cat.first
+      p felix
+      edit_params = {
+        cat: {
+          name: 'Felix',
+          age: 2,
+          enjoys: 'Walks',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['enjoys']).to include "is too short (minimum is 10 characters)"
+    end
+```
+>File Path:  app/models/cat.rb
+```ruby
+class Cat < ApplicationRecord
+    validates :name, :age, :enjoys, :image, presence: true
+    validates :name, length: {minimum: 1}
+    validates :age, length: {minimum: 1}
+    validates :enjoys, length: {minimum: 10}
+  end
+```

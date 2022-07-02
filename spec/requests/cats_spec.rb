@@ -139,31 +139,85 @@ RSpec.describe "Cats", type: :request do
       # expect(cat.name).to eq 'Felix'
       expect(update_cat.name).to eq 'Buster'
     end
-
-    it "doesn't update a cat to be nameless" do
+###################################   BELOW
+    it "doesn't update a cat to have a useless name" do
       Cat.create(
         name: 'Felix',
         age: 2,
         enjoys: 'Walks in the park',
         image: 'https://thiscatdoesnotexist.com/'
       )
-      
-      update_cat_params = {
+
+      felix = Cat.first
+      p felix
+      edit_params = {
         cat: {
-          
-          age: 2,
+          name: '',
+          age: 3,
           enjoys: 'Walks in the park',
           image: 'https://thiscatdoesnotexist.com/'
         }
       }
-      cat = Cat.first
-      cat_id = cat.id
-      patch "/cats/#{cat_id}", params: update_cat_params
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
       expect(response.status).to eq 422
       json = JSON.parse(response.body)
       expect(json['name']).to include "can't be blank"
     end
 
+    it "doesn't update a cat to not have useful age information" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+
+      felix = Cat.first
+      p felix
+      edit_params = {
+        cat: {
+          name: 'Felix',
+          age: nil,
+          enjoys: 'Walks in the park',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['age']).to include "can't be blank"
+    end
+
+    it "doesn't update a cat to not have useful enjoyment information" do
+      Cat.create(
+        name: 'Felix',
+        age: 2,
+        enjoys: 'Walks in the park',
+        image: 'https://thiscatdoesnotexist.com/'
+      )
+
+      felix = Cat.first
+      p felix
+      edit_params = {
+        cat: {
+          name: 'Felix',
+          age: 2,
+          enjoys: 'Walks',
+          image: 'https://thiscatdoesnotexist.com/'
+        }
+      }
+ 
+      patch "/cats/#{felix.id}", params: edit_params
+
+      expect(response.status).to eq 422
+      json = JSON.parse(response.body)
+      expect(json['enjoys']).to include "is too short (minimum is 10 characters)"
+    end
+######################################## ABOVE
   end
   describe "Destroy /cats/:id" do
     it "destroys a cat from the database" do
