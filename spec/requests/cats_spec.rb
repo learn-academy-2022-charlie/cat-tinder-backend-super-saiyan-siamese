@@ -139,7 +139,7 @@ RSpec.describe "Cats", type: :request do
       # expect(cat.name).to eq 'Felix'
       expect(update_cat.name).to eq 'Buster'
     end
-###################################   BELOW
+
     it "doesn't update a cat to have a useless name" do
       Cat.create(
         name: 'Felix',
@@ -217,7 +217,7 @@ RSpec.describe "Cats", type: :request do
       json = JSON.parse(response.body)
       expect(json['enjoys']).to include "is too short (minimum is 10 characters)"
     end
-######################################## ABOVE
+
   end
   describe "Destroy /cats/:id" do
     it "destroys a cat from the database" do
